@@ -25,6 +25,7 @@ export function Welcome() {
         <S.Button>
           <S.ButtonText>Entrar</S.ButtonText>
         </S.Button>
+        a
       </S.Bottom>
     </S.Container>
   );
