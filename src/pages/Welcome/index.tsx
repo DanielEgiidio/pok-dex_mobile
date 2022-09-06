@@ -11,14 +11,21 @@ export function Welcome() {
   return (
     <S.Container>
       <S.Content>
-        <S.WrapperAnimation>
-          <AnimatedLottieView autoPlay source={pokemonAnimation} loop />
-        </S.WrapperAnimation>
-      </S.Content>
-      <S.Footer>
+        <S.WrapperIcon>
+          <S.IconContent>
+            <AnimatedLottieView autoPlay source={pokemonAnimation} loop />
+          </S.IconContent>
+        </S.WrapperIcon>
+
         <S.Title>Bem Vindo</S.Title>
         <S.SubTitle>Encontre todos os pokémons em um só lugar</S.SubTitle>
-      </S.Footer>
+      </S.Content>
+
+      <S.Bottom>
+        <S.Button>
+          <S.ButtonText>Entrar</S.ButtonText>
+        </S.Button>
+      </S.Bottom>
     </S.Container>
   );
 }
