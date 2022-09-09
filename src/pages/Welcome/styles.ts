@@ -48,23 +48,6 @@ export const IconContent = styled.View`
   transform: rotate(-30deg);
 `;
 
-export const Button = styled.TouchableOpacity`
-  ${({ theme }) => css`
-    width: 100%;
-    height: 50px;
-    border-radius: 70px;
-    background: ${theme.colors.boxType.water};
-    justify-content: center;
-    align-items: center;
-  `}
-`;
-
-export const ButtonText = styled.Text`
-  ${({ theme }) => css`
-    color: ${theme.colors.background};
-  `}
-`;
-
 export const Title = styled.Text`
   ${({ theme }) => css`
     color: ${theme.colors.background};
