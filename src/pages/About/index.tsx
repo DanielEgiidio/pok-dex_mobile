@@ -6,6 +6,9 @@ import api from "../../services/api";
 import { useTheme } from "styled-components";
 import { Feather } from "@expo/vector-icons";
 import circle from "../../assets/img/circle.png";
+import { FadeAnimation } from "../../components/FadeAnimation";
+
+import dots from "../../assets/img/dots.png";
 
 type RouteParams = {
   pokemonId: number;
@@ -84,25 +87,49 @@ export function About() {
     getPokemonDetail();
   }, []);
 
-  return load ? (
-    <S.LoadingScreen>
-      <Load />
-    </S.LoadingScreen>
-  ) : (
-    <ScrollView style={{ flex: 1 }}>
-      <S.Header type={pokemon.types[0].type.name}>
-        <S.BackButton>
-          <Feather name="chevron-left" size={24} color="#FFF" />
-        </S.BackButton>
-        <S.ContentImage>
-          <S.CircleImage source={circle} />
-          <S.PokemonImage
-            source={{
-              uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
-            }}
-          />
-        </S.ContentImage>
-      </S.Header>
-    </ScrollView>
+  return (
+    <>
+      {load ? (
+        <>
+          <Text style={{ marginTop: 200 }}>Carregando</Text>
+        </>
+      ) : (
+        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
+          <S.Header type={pokemon.types[0].type.name}>
+            <S.BackButton>
+              <Feather name="chevron-left" size={24} color="#FFF" />
+            </S.BackButton>
+            <S.ContentImage>
+              <S.CircleImage source={circle} />
+              <FadeAnimation>
+                <S.PokemonImage
+                  source={{
+                    uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
+                  }}
+                />
+              </FadeAnimation>
+            </S.ContentImage>
+
+            <S.Content>
+              <S.PokemonId>#{pokemon.id}</S.PokemonId>
+              <S.PokemonName>{pokemon.name}</S.PokemonName>
+
+              <S.PokemonTypeContainer>
+                {pokemon.types.map(({ type }) => (
+                  <S.PokemonType type={type.name} key={type.name}>
+                    <S.PokemonTypeText>{type.name}</S.PokemonTypeText>
+                  </S.PokemonType>
+                ))}
+              </S.PokemonTypeContainer>
+            </S.Content>
+            <S.DotsImage source={dots} />
+          </S.Header>
+
+          <S.Container>
+            <S.Title type={pokemon.types[0].type.name}>Base Stats</S.Title>
+          </S.Container>
+        </ScrollView>
+      )}
+    </>
   );
 }
