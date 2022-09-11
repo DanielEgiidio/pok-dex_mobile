@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Alert, ScrollView, Text } from "react-native";
-import * as S from "./styles";
-import api from "../../services/api";
-import { useTheme } from "styled-components";
+
+import { ScrollView, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import circle from "../../assets/img/circle.png";
+
+import { Load } from "../../components/Load";
 import { FadeAnimation } from "../../components/FadeAnimation";
 
+import api from "../../services/api";
+import circle from "../../assets/img/circle.png";
 import dots from "../../assets/img/dots.png";
 
-type RouteParams = {
-  pokemonId: number;
-};
+import * as S from "./styles";
+import { useTheme } from "styled-components";
 
-type Stats = {
-  base_stat: 62;
+interface IAttributes {
+  base_stat: number;
   stat: {
     name: string;
   };
-};
+}
 
-type Abilities = {
+interface IAbilitys {
   ability: {
     name: string;
   };
-};
+}
 
 export type TypeName =
   | "grass"
@@ -47,24 +47,33 @@ type PokemonType = {
 type PokemonProps = {
   id: number;
   name: string;
-  stats: Stats[];
-  abilities: Abilities[];
-  color: string;
+  stats: IAttributes[];
+  abilities: IAbilitys[];
   types: PokemonType[];
+  color: string;
+};
+
+type RouteParams = {
+  pokemonId: number;
 };
 
 export function About() {
   const route = useRoute();
-  const { pokemonId } = route.params as RouteParams;
   const { colors } = useTheme();
 
+  const { pokemonId } = route.params as RouteParams;
+  const { goBack } = useNavigation();
+
   const [pokemon, setPokemon] = useState({} as PokemonProps);
-  const [load, setLoad] = useState(true);
+  const [load, setLoad] = useState<boolean>(true);
 
   useEffect(() => {
-    async function getPokemonDetail() {
+    async function getPokemonDetail(): Promise<void> {
       try {
-        const response = await api.get(`/pokemon/${pokemonId}`);
+        const response = await api.get(
+          `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`
+        );
+
         const { stats, abilities, id, name, types } = response.data;
 
         const currentType = types[0].type.name as TypeName;
@@ -78,58 +87,85 @@ export function About() {
           types,
           color,
         });
+
+        setLoad(false);
       } catch (err) {
-        Alert.alert("Aconteceu algum erro");
+        Alert.alert("Ops, ocorreu um erro, tente mais tarde");
       } finally {
         setLoad(false);
       }
     }
+
     getPokemonDetail();
-  }, []);
+  }, [pokemonId]);
 
-  return (
-    <>
-      {load ? (
-        <>
-          <Text style={{ marginTop: 200 }}>Carregando</Text>
-        </>
-      ) : (
-        <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
-          <S.Header type={pokemon.types[0].type.name}>
-            <S.BackButton>
-              <Feather name="chevron-left" size={24} color="#FFF" />
-            </S.BackButton>
-            <S.ContentImage>
-              <S.CircleImage source={circle} />
-              <FadeAnimation>
-                <S.PokemonImage
-                  source={{
-                    uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
-                  }}
-                />
-              </FadeAnimation>
-            </S.ContentImage>
+  function navigateBack() {
+    goBack();
+  }
 
-            <S.Content>
-              <S.PokemonId>#{pokemon.id}</S.PokemonId>
-              <S.PokemonName>{pokemon.name}</S.PokemonName>
+  return load ? (
+    <S.LoadingScreen>
+      <Load />
+    </S.LoadingScreen>
+  ) : (
+    <ScrollView style={{ flex: 1 }}>
+      <S.Header type={pokemon.types[0].type.name}>
+        <S.BackButton onPress={navigateBack}>
+          <Feather name="chevron-left" size={24} color="#fff" />
+        </S.BackButton>
 
-              <S.PokemonTypeContainer>
-                {pokemon.types.map(({ type }) => (
-                  <S.PokemonType type={type.name} key={type.name}>
-                    <S.PokemonTypeText>{type.name}</S.PokemonTypeText>
-                  </S.PokemonType>
-                ))}
-              </S.PokemonTypeContainer>
-            </S.Content>
-            <S.DotsImage source={dots} />
-          </S.Header>
+        <S.ContentImage>
+          <S.CircleImage source={circle} />
+          <FadeAnimation>
+            <S.PokemonImage
+              source={{
+                uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`,
+              }}
+            />
+          </FadeAnimation>
+        </S.ContentImage>
 
-          <S.Container>
-            <S.Title type={pokemon.types[0].type.name}>Base Stats</S.Title>
-          </S.Container>
-        </ScrollView>
-      )}
-    </>
+        <S.Content>
+          <S.PokemonId>#{pokemon.id}</S.PokemonId>
+          <S.PokemonName>{pokemon.name}</S.PokemonName>
+          <S.PokemonTypeContainer>
+            {pokemon.types.map(({ type }) => (
+              <S.PokemonType type={type.name} key={type.name}>
+                <S.PokemonTypeText>{type.name}</S.PokemonTypeText>
+              </S.PokemonType>
+            ))}
+          </S.PokemonTypeContainer>
+        </S.Content>
+
+        <S.DotsImage source={dots} />
+      </S.Header>
+
+      <S.Container>
+        <S.Title type={pokemon.types[0].type.name}> Base States </S.Title>
+
+        {pokemon.stats.map((attribute) => (
+          <S.StatusBar key={attribute.stat.name}>
+            <S.Attributes>{attribute.stat.name}</S.Attributes>
+            <S.AttributesNumber>{attribute.base_stat}</S.AttributesNumber>
+            <S.ContentBar>
+              <S.ProgressBar
+                type={pokemon.types[0].type.name}
+                borderWidth={0}
+                progress={100}
+                width={attribute.base_stat}
+                color={pokemon.color}
+              />
+            </S.ContentBar>
+          </S.StatusBar>
+        ))}
+
+        <S.Title type={pokemon.types[0].type.name}> Abilities </S.Title>
+        {pokemon.abilities.map((abilityItem) => (
+          <S.Ability key={abilityItem.ability.name}>
+            {abilityItem.ability.name}
+          </S.Ability>
+        ))}
+      </S.Container>
+    </ScrollView>
   );
 }

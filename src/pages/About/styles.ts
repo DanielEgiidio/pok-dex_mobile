@@ -1,9 +1,24 @@
 import styled, { css } from "styled-components/native";
-import { TypeName } from ".";
+
+import * as Progress from "react-native-progress";
 
 type TypeProps = {
-  type: TypeName;
+  type:
+    | "grass"
+    | "fire"
+    | "water"
+    | "poison"
+    | "normal"
+    | "bug"
+    | "flying"
+    | "eletric"
+    | "ground";
 };
+
+export const LoadingScreen = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
 
 export const Header = styled.View<TypeProps>`
   ${({ theme, type }) => css`
@@ -14,12 +29,6 @@ export const Header = styled.View<TypeProps>`
     align-items: center;
     position: relative;
   `}
-`;
-
-export const BackButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 70px;
-  left: 40px;
 `;
 
 export const ContentImage = styled.View`
@@ -41,12 +50,20 @@ export const Content = styled.View`
   margin-left: 30px;
 `;
 
+export const DotsImage = styled.Image`
+  width: 85px;
+  position: absolute;
+  right: -20px;
+  top: 220px;
+`;
+
 export const PokemonId = styled.Text`
   ${({ theme }) => css`
     font-size: 16px;
     line-height: 19px;
+    font-style: normal;
     font-weight: bold;
-    color: ${theme.colors.background};
+    color: ${theme.colors.light_text};
   `}
 `;
 
@@ -64,6 +81,7 @@ export const PokemonName = styled.Text`
 export const PokemonTypeContainer = styled.View`
   flex-direction: row;
 `;
+
 export const PokemonType = styled.View<TypeProps>`
   ${({ theme, type }) => css`
     width: 61px;
@@ -83,13 +101,6 @@ export const PokemonTypeText = styled.Text`
   font-weight: 500;
   font-size: 12px;
   line-height: 14px;
-`;
-
-export const DotsImage = styled.Image`
-  width: 85px;
-  position: absolute;
-  right: -20px;
-  top: 220px;
 `;
 
 export const Container = styled.View`
@@ -112,4 +123,58 @@ export const Title = styled.Text<TypeProps>`
     padding: 20px;
     color: ${theme.colors.boxType[type]};
   `}
+`;
+
+export const StatusBar = styled.View`
+  width: 100%;
+  padding: 10px 20px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const Attributes = styled.Text`
+  ${({ theme }) => css`
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    width: 110px;
+    text-transform: capitalize;
+    color: ${theme.colors.text};
+  `}
+`;
+export const AttributesNumber = styled.Text`
+  ${({ theme }) => css`
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: right;
+    color: ${theme.colors.detail};
+    margin-left: 20px;
+  `}
+`;
+
+export const ContentBar = styled.View`
+  margin-left: 20px;
+`;
+
+export const Ability = styled.Text`
+  ${({ theme }) => css`
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+    padding: 10px 20px;
+    text-transform: capitalize;
+    color: ${theme.colors.detail};
+  `}
+`;
+
+export const ProgressBar = styled(Progress.Bar).attrs({})<TypeProps>``;
+
+export const BackButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 70px;
+  left: 40px;
 `;
